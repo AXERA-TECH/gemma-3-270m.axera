@@ -3,3 +3,5 @@ torch
 safetensors
 sentencepiece
 transformers
+accelerate
+bitsandbytes>=0.46.1

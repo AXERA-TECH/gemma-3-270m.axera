@@ -2,3 +2,9 @@
 /gemma-3-270m-AX*/
 __pycache__/
 *.pyc
+*.log
+model_convert/convert_bitsandbytes_to_float.py
+model_convert/build_bnb_llm.sh
+model_convert/gptqmodel_offload/
+.cache/
+gemma-3-270m-it*/

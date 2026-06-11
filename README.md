@@ -42,7 +42,7 @@ CHIP=AX650
 PARALLEL=8
 WEIGHT_TYPE=s8
 POST_WEIGHT_TYPE=s8
-OUTPUT_DIR=../gemma-3-270m-it-AX650-C128-P1024-CTX2047
+OUTPUT_DIR=../gemma-3-270m-it-${CHIP}-C128-P1024-CTX2047
 ```
 
 `MAX_CONTEXT` is passed to `pulsar2 llm_build2 --max_context`. The actual maximum
@@ -57,11 +57,21 @@ Override any value through environment variables:
 PREFILL_LEN=1152 MAX_CONTEXT=2048 PARALLEL=4 bash build_all.sh
 ```
 
+AX630C build:
+
+```bash
+CHIP=AX630C bash build_all.sh
+```
+
+The current `pulsar2 llm_build2` parser does not accept `AX630C` directly. The
+build script maps `CHIP=AX630C` to `--chip AX620E` and keeps `AX630C` in the
+package name.
+
 `build_all.sh` runs:
 
 1. `pulsar2 llm_build2` to compile decoder/prefill/post axmodels.
 2. `prepare_axllm_package.py` to export:
-  - `model.embed_tokens.weight.bfloat16.bin`
+   - `model.embed_tokens.weight.bfloat16.bin`
    - `tokenizer.txt`
    - `config.json`
    - `post_config.json`
@@ -72,7 +82,7 @@ If axmodels were already compiled:
 
 ```bash
 cd gemma-3-270m.axera/model_convert
-OUTPUT_DIR=/path/to/gemma-3-270m-it-AX650-C128-P1024-CTX2047 bash prepare_package.sh
+OUTPUT_DIR=/path/to/gemma-3-270m-it-${CHIP}-C128-P1024-CTX2047 bash prepare_package.sh
 ```
 
 Use `STRICT_AXMODELS=1` to fail if expected axmodel files are missing.
@@ -82,13 +92,13 @@ Use `STRICT_AXMODELS=1` to fail if expected axmodel files are missing.
 After copying the generated model package to the target device:
 
 ```bash
-axllm run /path/to/gemma-3-270m-it-AX650-C128-P1024-CTX2047
+axllm run /path/to/gemma-3-270m-it-${CHIP}-C128-P1024-CTX2047
 ```
 
 or:
 
 ```bash
-axllm serve /path/to/gemma-3-270m-it-AX650-C128-P1024-CTX2047 --port 8000
+axllm serve /path/to/gemma-3-270m-it-${CHIP}-C128-P1024-CTX2047 --port 8000
 ```
 
 The generated `config.json` sets:
@@ -108,10 +118,11 @@ compiled axmodels by `npu-codebase/yasched/llm_builder/gemma_test.py`.
 
 ## Generated Package
 
-The default conversion in this workspace generated:
+The conversions in this workspace generated:
 
 ```text
 gemma-3-270m.axera/gemma-3-270m-it-AX650-C128-P1024-CTX2047/
+gemma-3-270m.axera/gemma-3-270m-it-AX630C-C128-P1024-CTX2047/
 ```
 
 The package contains 18 layer axmodels, `gemma3_text_post.axmodel`, the BF16
